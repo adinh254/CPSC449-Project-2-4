@@ -2,7 +2,6 @@ from flask import Flask, request, jsonify, g
 import sqlite3
 
 app = Flask(__name__)
-app.config.from_envvar('APP_CONFIG')
 
 #DATABASE = '/home/student/Desktop/cpsc449P2/CPSC449-Project2/database.db'
 
@@ -16,6 +15,7 @@ def get_db():
         db = g._database = sqlite3.connect(app.config['DATABASE'])
         db.row_factory = make_dicts
     return db
+
 
 @app.teardown_appcontext
 def close_connection(exception):
@@ -36,9 +36,8 @@ def init_db():
         db = get_db()
         with app.open_resource('user.sql', mode='r') as f:
             db.cursor().executescript(f.read())
-        db.commit()
+            db.commit()
 
-        
 @app.route('/', methods=['GET'])
 def hello():
     return '''<h1>Distant Reading Archive</h1>
@@ -54,8 +53,6 @@ def api_all():
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
-        with app.open_resource('books.sql', mode='r') as f:
-            db.cursor().execute
 
 if __name__ == '__main__':
     app.run()
