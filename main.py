@@ -38,6 +38,7 @@ def init_db():
             db.cursor().executescript(f.read())
         db.commit()
 
+        
 @app.route('/', methods=['GET'])
 def hello():
     return '''<h1>Distant Reading Archive</h1>
@@ -53,6 +54,8 @@ def api_all():
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
+        with app.open_resource('books.sql', mode='r') as f:
+            db.cursor().execute
 
 if __name__ == '__main__':
     app.run()
