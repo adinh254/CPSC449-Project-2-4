@@ -2,6 +2,7 @@ import click
 from flask import Flask, request, jsonify, g
 import sqlite3
 
+
 app = Flask(__name__)
 app.config.from_object('application.default_settings')
 
@@ -9,6 +10,7 @@ app.config.from_object('application.default_settings')
 def make_dicts(cursor, row):
     return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
+
 
 def get_db():
     db = getattr(g, '_database', None)
@@ -52,6 +54,19 @@ def hello():
 def api_all():
     all_users = query_db('SELECT * FROM user;')
     return jsonify(all_users)
+
+
+@app.cli.command('create')
+@click.argument('username')
+@click.argument('email')
+@click.argument('password')
+def create_user(username, email, password):
+    insert_query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
+    new_user = (username, email, password)
+    db = get_db()
+    db.execute(insert_query, new_user)
+    db.commit()
+    return jsonify(new_user)
 
 
 @app.errorhandler(404)
