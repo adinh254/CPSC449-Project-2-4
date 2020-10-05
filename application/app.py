@@ -1,6 +1,8 @@
 import click
 from flask import Flask, request, jsonify, g
+from flask_api import status
 import sqlite3
+from werkzeug.security import generate_password_hash, check_password_hash
 
 
 app = Flask(__name__)
@@ -56,17 +58,40 @@ def api_all():
     return jsonify(all_users)
 
 
-@app.cli.command('create')
-@click.argument('username')
-@click.argument('email')
-@click.argument('password')
-def create_user(username, email, password):
+@app.route('/user', methods=['GET', 'POST'])
+def user():
+    if request.method == 'POST':
+        return create_user()
+
+
+def create_user():
+    user_data = request.get_json()
+    post_fields = {*user_data.keys()}
+    required_fields = {'username', 'email', 'password'}
+
+    if not required_fields <= post_fields:
+        err = f'Missing fields: {required_fields - posted_fields}'
+        raise exceptions.ParseError(err)
+
+    username = user_data['username']
+    email = user_data['email']
+    password = user_data['password']
+
+    hashed = generate_password_hash(password, method='pbkdf2:sha256')
+
     insert_query = 'INSERT INTO user (username, email, password) VALUES (?, ?, ?)'
-    new_user = (username, email, password)
+    new_user = (username, email, hashed)
     db = get_db()
-    db.execute(insert_query, new_user)
+    try:
+        db.execute(insert_query, new_user)
+    except sqlite3.Error as err:
+        err_string = str(err)
+        if 'UNIQUE' not in err_string:
+            return err_string, status.HTTP_500_INTERNAL_SERVER_ERROR
+        return err_string, status.HTTP_409_CONFLICT
     db.commit()
-    return jsonify(new_user)
+    user_data['password'] = hashed
+    return user_data, status.HTTP_201_CREATED
 
 
 @app.errorhandler(404)
