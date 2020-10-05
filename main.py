@@ -1,7 +1,7 @@
-import click
 from flask import Flask, request, jsonify, g
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
+import click
 
 
 app = Flask(__name__)
@@ -68,7 +68,7 @@ def api_all():
 #     db.commit()
 #     return jsonify(new_user)
 
-@app.route('/authenticateUser/', methods=['GET'])
+@app.route('/authenticateUser', methods=['GET'])
 def auth(): 
     query_parameters = request.args
 
@@ -104,6 +104,29 @@ def auth():
 
     return a
 
+
+@app.route('/getUserTimeline/', methods=['GET'])
+def userTime(): 
+    query_parameters = request.args
+
+    author = query_parameters.get('author')
+
+    query = "SELECT * FROM timeline WHERE"
+    to_filter = []
+
+    if author: 
+        query += ' author=? AND'
+        to_filter.append(author)
+    if not (author):
+        return page_not_found(404)
+
+    query = query[:-4] + ';'
+    result = query_db(query, to_filter)
+    a = "True"
+
+    if not result:
+        a = "False"
+    return a
 
 @app.errorhandler(404)
 def page_not_found(e):
