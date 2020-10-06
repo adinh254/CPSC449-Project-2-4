@@ -4,6 +4,7 @@ from flask_api import status, exceptions
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
+import constant
 
 app = Flask(__name__)
 app.config.from_object('application.default_settings')
@@ -95,6 +96,24 @@ def create_user():
 
 #TIMELINE MICROSERVICE
 def getUserTimeline(username):
+    user_data = request.get_json()
+
+    #Get User id
+    user_id = get_user_id(username)
+    
+    db = get_db() #Get database to access user table
+    
+    MAX_COUNT = 25
+    count = 0
+    user_timeline = []
+    #Print chronological order from most recent 
+    for row in reversed(db.execute('SELECT * FROM timeline ORDER BY time_stamp DESC'))
+        count++
+        if count > constant.MAX_COUNT:
+            break
+        user_timeline.append(row)
+
+    return user_timeline, status.HTTP_200_OK
 
 def getPublicTimeline():
     public_time = datetime.now()
@@ -105,12 +124,22 @@ def getPublicTimeline():
 def getHomeTimeline(username):
         
 def postTweet(username, text):
+    user_data = request.post_json()
     #Get current time 
-    time = datetime.now()
-    time_format = time.strftime("%A,%d. %B %Y %I:%M%p") #Format the time into a string 
+    time = datetime.now() 
+    user_id = get_user_id(username)
+    insert_query = 'INSERT INTO timeline(user_id, time_stamp, tweet) VALUES(?,?,?)'
+    tweet_to_post = (user_id, time, text)
+    db = get_db()
+    try:
+        db.execute(insert_query, tweet_to_post) #insert tweet with the timeline
+    except sqlite3Error as err:
+        err_string = str(err)
+        return err_string, status.HTTP_500_INTERNAL_SERVER_ERROR
 
-    insert_query = 'INSERT INTO timeline()'
-        
+    db.commit()
+    return user_data, status.HTTP_500_OK
+
 
 @app.route('/authenticateUser', methods=['GET'])
 def auth():
@@ -222,6 +251,15 @@ def remove_follower(follower_id, following_id):
     db.commit()
     success_string = f'User {follower_id} has unfollowed User {following_id}.'
     return success_string, status.HTTP_200_OK
+
+
+def get_user_id(username):
+    user_query = 'SELECT DISTINCT id FROM user WHERE username=?'
+    db = get_db()
+    user_data = query_db(user_query, (username,))
+    if len(user_data) < 1:
+        return -1
+    return user_data[0]['id']
 
 @app.errorhandler(404)
 def page_not_found(e):
