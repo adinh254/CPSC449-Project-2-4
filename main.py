@@ -129,6 +129,21 @@ def userTime():
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
 
+@app.route('/postTweet', methods=['GET','POST'])
+def postTweet():
+    # get data from user
+    data = request.json
+    username = data["username"]
+    tweet = data["tweet"]
+
+    #get user id from user
+    user_query = 'SELECT id FROM user WHERE username= ?;'
+    user_id = query_db(user_query, username)
+
+    # insert tweet to timeline
+    insert_query = 'INSERT INTO timeline (user_id, tweet) VALUES (?, ?)'
+    get_db().execute(insert_query,(user_id, tweet))
+
 
 if __name__ == '__main__':
     app.run()
