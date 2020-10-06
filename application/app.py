@@ -119,6 +119,12 @@ def getPublicTimeline():
 def getHomeTimeline(username):
         
 def postTweet(username, text):
+    #Get current time 
+    time = datetime.now()
+    time_format = time.strftime("%A,%d. %B %Y %I:%M%p") #Format the time into a string 
+    
+    if username:
+        insert_query = 'INSERT INTO timeline()
         
 @app.errorhandler(404)
 def page_not_found(e):
