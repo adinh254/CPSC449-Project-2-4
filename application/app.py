@@ -107,8 +107,16 @@ def create_user():
 # 
 #     insert_query = 'INSERT INTO relations
 
+#TIMELINE MICROSERVICE
+def getUserTimeline(username):
 
-
+def getPublicTimeline():
+    public_time = 
+    print("Public Time:" )
+def getHomeTimeline(username):
+        
+def postTweet(username, text):
+        
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
