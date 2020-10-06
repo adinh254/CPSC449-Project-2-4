@@ -3,7 +3,7 @@ from flask import Flask, request, jsonify, g
 from flask_api import status, exceptions
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object('application.default_settings')
@@ -111,8 +111,11 @@ def create_user():
 def getUserTimeline(username):
 
 def getPublicTimeline():
-    public_time = 
-    print("Public Time:" )
+    public_time = datetime.now()
+    print("Public Time: ")
+    public_time_fmat = public_time.strftime("%A,%d. %B %Y %I:%M%p")
+    return "Public Time: " + public_time_fmat
+
 def getHomeTimeline(username):
         
 def postTweet(username, text):

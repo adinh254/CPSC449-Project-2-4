@@ -20,17 +20,16 @@ CREATE TABLE user_relations (
 
 DROP TABLE IF EXISTS timeline;
 CREATE TABLE timeline(
-	publictime TEXT NOT NULL 
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INTEGER NOT NULL,
+	time_stamp TIMESTAMP NOT NULL,
+        tweet TEXT NOT NULL	
 );
 
 INSERT INTO user(username, email, password) VALUES('maui-mac','maui_mac123@gmail.com','password1');
 INSERT INTO user(username, email, password) VALUES('jim','jimmy@gmail.com','pass2');
 INSERT INTO user(username, email, password) VALUES('andrew','A23@gmail.com','passw3');
 INSERT INTO user(username, email, password) VALUES('bobby_hill','bob_the_builder@gmail.com','pas4');
-
-
-SELECT datetime('now')
-INSERT INTO timeline(publictime) VALUES(datetime('now'))
 
 
 COMMIT;
