@@ -1,6 +1,6 @@
 import click
 from flask import Flask, request, jsonify, g
-from flask_api import status
+from flask_api import status, exceptions
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -41,7 +41,7 @@ def init_db():
     click.echo('Initializing the Database...')
     with app.app_context():
         db = get_db()
-        with app.open_resource('sql/user.sql', mode='r') as f:
+        with app.open_resource('sql/schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
             db.commit()
 
@@ -70,7 +70,7 @@ def create_user():
     required_fields = {'username', 'email', 'password'}
 
     if not required_fields <= post_fields:
-        err = f'Missing fields: {required_fields - posted_fields}'
+        err = f'Missing fields: {required_fields - post_fields}'
         raise exceptions.ParseError(err)
 
     username = user_data['username']
@@ -92,6 +92,21 @@ def create_user():
     db.commit()
     user_data['password'] = hashed
     return user_data, status.HTTP_201_CREATED
+
+
+# @app.route('/follow', methods=['POST'])
+# def add_follower():
+#     relation_data = request.get_json()
+#     post_fields = {*relation_data.keys()}
+#     required_fields = {'follower_id', 'following_id'}
+#     if not required_fields <= post_fields:
+#         err = f'Missing Fields: {required_fields - post_fields}'
+#         raise exceptions.ParseError(err)
+#     follower_id = relation_data['follower_id']
+#     following_id = relation_data['following_id']
+# 
+#     insert_query = 'INSERT INTO relations
+
 
 
 @app.errorhandler(404)
