@@ -91,22 +91,9 @@ def create_user():
         return err_string, status.HTTP_409_CONFLICT
     db.commit()
     user_data['password'] = hashed
-    return user_data, status.HTTP_201_CREATED
+    return user_data, status.HTTP_200_OK
 
-
-# @app.route('/follow', methods=['POST'])
-# def add_follower():
-#     relation_data = request.get_json()
-#     post_fields = {*relation_data.keys()}
-#     required_fields = {'follower_id', 'following_id'}
-#     if not required_fields <= post_fields:
-#         err = f'Missing Fields: {required_fields - post_fields}'
-#         raise exceptions.ParseError(err)
-#     follower_id = relation_data['follower_id']
-#     following_id = relation_data['following_id']
-# 
-#     insert_query = 'INSERT INTO relations
-
+<<<<<<< HEAD
 #TIMELINE MICROSERVICE
 def getUserTimeline(username):
 
@@ -126,6 +113,121 @@ def postTweet(username, text):
     if username:
         insert_query = 'INSERT INTO timeline()
         
+=======
+
+@app.route('/authenticateUser', methods=['GET'])
+def auth():
+    # get data from user
+    data = request.json
+    username = data["username"]
+    password = data["password"]
+
+    #get the hash password from user
+    query = "SELECT password FROM user WHERE"
+    to_filter = []
+
+    if username:
+        query += ' username=? AND'
+        to_filter.append(username)
+    if not username:
+        return page_not_found(404)
+
+    query = query[:-4] + ';'
+    result = query_db(query, to_filter)[0]
+    hpassword = result['password']
+
+    print(hpassword)
+    answer = False
+
+    #checks if user input password is correct or not.
+    if check_password_hash(hpassword,password):
+        answer = True
+    print(str(answer))
+
+    return answer
+
+
+@app.route('/follow', methods=['POST'])
+def follow():
+    user_ids = get_relation_ids()
+    return add_follower(*user_ids)
+
+
+@app.route('/unfollow', methods=['POST'])
+def unfollow():
+    user_ids = get_relation_ids()
+    return remove_follower(*user_ids)
+
+
+def get_relation_ids():
+    relation_data = request.get_json()
+    post_fields = {*relation_data.keys()}
+    required_fields = {'username', 'user_followed'}
+    if not required_fields <= post_fields:
+        err = f'Missing Fields: {required_fields - post_fields}'
+        return err, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
+    if relation_data['username'] == relation_data['user_followed']:
+        err = 'ERROR: User cannot follow themself.'
+        return err, status.HTTP_416_REQUESTED_RANGE_NOT_SATISFIABLE
+
+    username = relation_data['username']
+    user_followed = relation_data['user_followed']
+
+    user_query = 'SELECT id, username FROM user WHERE username in (?, ?)'
+    user_data = query_db(user_query, (username, user_followed))
+    if len(user_data) < 2:
+        for data in user_data:
+            if data['username'] == username:
+                return f'ERROR: Failed to follow {user_followed}. User does not exist in the database.', status.HTTP_404_NOT_FOUND
+            else:
+                return f'ERROR: {username} does not exist.', status.HTTP_404_NOT_FOUND
+            return f'ERROR: Users do not exist.', status.HTTP_404_NOT_FOUND
+
+    follower_id = 0
+    following_id = 0
+    first_row = user_data[0]
+    second_row = user_data[1]
+    if first_row['username'] == username:
+        follower_id = first_row['id']
+        following_id = second_row['id']
+    else:
+        follower_id = first_row['id']
+        following_id = second_row['id']
+
+    return (follower_id, following_id)
+
+
+def add_follower(follower_id, following_id):
+    insert_query = 'INSERT INTO user_relations (follower_id, following_id) VALUES (?, ?)'
+    db = get_db()
+    try:
+        db.execute(insert_query, (follower_id, following_id))
+    except sqlite3.Error as err:
+        err_string = str(err)
+        if 'UNIQUE' not in err_string:
+            return err_string, status.HTTP_500_INTERNAL_SERVER_ERROR
+        return err_string, status.HTTP_409_CONFLICT
+    db.commit()
+    success_string = f'User {follower_id} is now following User {following_id}.'
+    return success_string, status.HTTP_200_OK
+
+
+def remove_follower(follower_id, following_id):
+    delete_query = 'DELETE FROM user_relations WHERE follower_id=? AND following_id=?'
+    db = get_db()
+    cur = db.execute(delete_query, (follower_id, following_id))
+    rows_deleted = cur.rowcount
+    if rows_deleted < 1:
+        return 'ERROR: Follow relation not found.', status.HTTP_404_NOT_FOUND
+
+    assert rows_deleted < 2, "Duplicate follow relations should not exist!"
+
+    db.commit()
+    success_string = f'User {follower_id} has unfollowed User {following_id}.'
+    return success_string, status.HTTP_200_OK
+
+
+>>>>>>> ea2fdc661bc60a7b8c1637fedca2e9d5c62c36ea
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
