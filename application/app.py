@@ -94,6 +94,38 @@ def create_user():
     return user_data, status.HTTP_200_OK
 
 
+@app.route('/authenticateUser', methods=['GET'])
+def auth():
+    # get data from user
+    data = request.json
+    username = data["username"]
+    password = data["password"]
+
+    #get the hash password from user
+    query = "SELECT password FROM user WHERE"
+    to_filter = []
+
+    if username:
+        query += ' username=? AND'
+        to_filter.append(username)
+    if not username:
+        return page_not_found(404)
+
+    query = query[:-4] + ';'
+    result = query_db(query, to_filter)[0]
+    hpassword = result['password']
+
+    print(hpassword)
+    answer = False
+
+    #checks if user input password is correct or not.
+    if check_password_hash(hpassword,password):
+        answer = True
+    print(str(answer))
+
+    return answer
+
+
 @app.route('/follow', methods=['POST'])
 def follow():
     user_ids = get_relation_ids()
