@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify, g
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 import click
+import json
 
 
 app = Flask(__name__)
@@ -68,44 +69,39 @@ def api_all():
 #     db.commit()
 #     return jsonify(new_user)
 
-@app.route('/authenticateUser', methods=['GET'])
+@app.route('/authenticateUser', methods=['GET','POST'])
 def auth(): 
-    query_parameters = request.args
+    # get data from user
+    data = request.json
+    username = data["username"]
+    password = data["password"]
 
-    username = query_parameters.get('username')
-    password = query_parameters.get('password')
-    # hash password here
-    # hpassword = generate_password_hash(password, method="pbkdf2:sha256")
-    print(password)
-    # print(hpassword)
-    # uhpass = check_password_hash(hpassword,password)
-    # print(uhpass)
-
-    query = "SELECT * FROM user WHERE"
+    #get the hash password from user
+    query = "SELECT password FROM user WHERE"
     to_filter = []
 
-    if username: 
+    if username:
         query += ' username=? AND'
         to_filter.append(username)
-    if password:
-        query += ' password=? AND'
-        to_filter.append(password)
-    if not (username or password):
+    if not username:
         return page_not_found(404)
     
     query = query[:-4] + ';'
-    result = query_db(query, to_filter)
-    # a = result
-    a = " ".join([str(elem) for elem in result])
+    result = query_db(query, to_filter)[0]
+    hpassword = result['password']
+    
+    print(hpassword)
+    answer = False
+    
+    #checks if user input password is correct or not.
+    if check_password_hash(hpassword,password):
+        answer = True
+    print(str(answer))
+
+    return answer
 
 
-    if not result:
-        a = "False"
-
-    return a
-
-
-@app.route('/getUserTimeline/', methods=['GET'])
+@app.route('/getTime/', methods=['GET'])
 def userTime(): 
     query_parameters = request.args
 
@@ -127,6 +123,7 @@ def userTime():
     if not result:
         a = "False"
     return a
+
 
 @app.errorhandler(404)
 def page_not_found(e):
