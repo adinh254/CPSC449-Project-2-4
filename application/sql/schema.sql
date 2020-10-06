@@ -7,15 +7,15 @@ CREATE TABLE user (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     username TEXT NOT NULL UNIQUE,
     email TEXT NOT NULL UNIQUE,
-    password TEXT NOT NULL,
+    password TEXT NOT NULL
 );
 
 DROP TABLE IF EXISTS user_relations;
 CREATE TABLE user_relations (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
-	follower INTEGER NOT NULL,
-	following INTEGER NOT NULL,
-	UNIQUE(follower, following)
+	follower_id INTEGER NOT NULL,
+	following_id INTEGER NOT NULL,
+	UNIQUE(follower_id, following_id)
 );
 
 INSERT INTO user(username, email, password) VALUES('maui-mac','maui_mac123@gmail.com','password1');
