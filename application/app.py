@@ -93,7 +93,6 @@ def create_user():
     user_data['password'] = hashed
     return user_data, status.HTTP_200_OK
 
-<<<<<<< HEAD
 #TIMELINE MICROSERVICE
 def getUserTimeline(username):
 
@@ -109,11 +108,9 @@ def postTweet(username, text):
     #Get current time 
     time = datetime.now()
     time_format = time.strftime("%A,%d. %B %Y %I:%M%p") #Format the time into a string 
-    
-    if username:
-        insert_query = 'INSERT INTO timeline()
+
+    insert_query = 'INSERT INTO timeline()'
         
-=======
 
 @app.route('/authenticateUser', methods=['GET'])
 def auth():
@@ -226,8 +223,6 @@ def remove_follower(follower_id, following_id):
     success_string = f'User {follower_id} has unfollowed User {following_id}.'
     return success_string, status.HTTP_200_OK
 
-
->>>>>>> ea2fdc661bc60a7b8c1637fedca2e9d5c62c36ea
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
