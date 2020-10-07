@@ -18,11 +18,16 @@ Timeline Services
 ---------------------------------
 
 Test postTweets:
-curl -d '{"username":"follower","desc":"Hello World!"}' -H "Content-Type:application/json" -X POST http://127.0.0.1:5000/tweet
+curl -d '{"username":"follower","desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/tweet
 curl -d '{"username":"follower","desc":"123321foo"} -H Content-Type: application/json" -X POST http://127.0.0.1:5000/tweet
-curl -d '{"username":"following","desc":"aifjoasjfoja"}' -H "Content-Type:application/json" -X POST http://127.0.0.1:5000/tweet
-curl -d '{"username":"following","desc":"][][]"}' -H "Content-Type:application/json" -X POST http://127.0.0.1:5000/tweet
+curl -d '{"username":"following","desc":"aifjoasjfoja"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/tweet
+curl -d '{"username":"following","desc":"][][]"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/tweet
 
 Test getUserTimeline:
-curl -d '{"username":"follower"}' -H "Content-Type:application /json" -X GET http://127.0.0.1:5000/user/timeline
+curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/user/timeline
 
+Test getHomeTimeline:
+curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5000/home
+
+Test getPublicTimeline:
+curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5000/public
