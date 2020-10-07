@@ -100,9 +100,7 @@ def getUserTimeline(username):
 
     #Get User id
     user_id = get_user_id(username)
-    
     db = get_db() #Get database to access user table
-    
     MAX_COUNT = 25
     count = 0
     user_timeline = []
@@ -121,8 +119,6 @@ def getPublicTimeline():
     public_time_fmat = public_time.strftime("%A,%d. %B %Y %I:%M%p")
     return "Public Time: " + public_time_fmat
 
-def getHomeTimeline(username):
-        
 def postTweet(username, text):
     user_data = request.post_json()
     #Get current time 
