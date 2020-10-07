@@ -143,6 +143,22 @@ def postTweet():
     # insert tweet to timeline
     insert_query = 'INSERT INTO timeline (user_id, tweet) VALUES (?, ?)'
     get_db().execute(insert_query,(user_id, tweet))
+    
+    
+@app.route('/getHomeTimeline', methods=['GET','POST'])
+def postTweet():
+    # get username
+    data = request.json
+    username = data["username"]
+    friends = [] # list of friends
+    
+    #Query to get list of follows
+    friendQuery = 'SELECT following FROM user_relations WHERE follower= ?'
+    friendResult = query_db(friendQuery,username)
+
+    #get list this user follows
+    for friend in friendResult:
+        friends.append(friend)
 
 
 if __name__ == '__main__':
