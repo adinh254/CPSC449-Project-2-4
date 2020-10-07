@@ -13,5 +13,16 @@ curl -d '{"username":"follower","user_followed":"following"} -H "Content-Type: a
 Test removeFollower:
 curl -d '{"username":"follower","user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/unfollow
 
+
+Timeline Services
+---------------------------------
+
+Test postTweets:
+curl -d '{"username":"follower","desc":"Hello World!"}' -H "Content-Type:application/json" -X POST http://localhost:5000/tweet
+curl -d '{"username":"follower","desc":"123321foo"} -H Content-Type: application/json" -X POST http://localhost:5000/tweet
+curl -d '{"username":"following","desc":"aifjoasjfoja"}' -H "Content-Type:application/json" -X POST http://localhost:5000/tweet
+curl -d '{"username":"following","desc":"][][]"}' -H "Content-Type:application/json" -X POST http://localhost:5000/tweet
+
 Test getUserTimeline:
 curl -d '{"username":"follower"}' -H "Content-Type:application /json" -X GET http://localhost:5000/user/timeline
+
