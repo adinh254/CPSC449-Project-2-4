@@ -2,27 +2,27 @@ User Services:
 -----------------------
 
 Test createUser:
-curl -d '{"username":"follower","email":"follower@gmail.com","password":"world123"} -H "Content-Type: application/json" -X POST http://localhost:5000/user curl-d {"username":"following","password":"world123"}' -H "Content_Type: application/json" -X POST http://localhost:5000/user
+curl -d '{"username":"follower","email":"follower@gmail.com","password":"world123"} -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user curl-d {"username":"following","password":"world123"}' -H "Content_Type: application/json" -X POST http://127.0.0.1:5000/user
 
 Test Authorize:
-curl -d '{"username":"following","email":"following@gmail.com","password":"world123"}' -H "Content-Type:application/json" -X GET http://localhost:5000/user/auth
+curl -d '{"username":"following","email":"following@gmail.com","password":"world123"}' -H "Content-Type:application/json" -X GET http://127.0.0.1:5000/user/auth
 
 Test addFollower:
-curl -d '{"username":"follower","user_followed":"following"} -H "Content-Type: application/json" -X POST http://localhost:5000/follow
+curl -d '{"username":"follower","user_followed":"following"} -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/follow
 
 Test removeFollower:
-curl -d '{"username":"follower","user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/unfollow
+curl -d '{"username":"follower","user_followed":"following"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/unfollow
 
 
 Timeline Services
 ---------------------------------
 
 Test postTweets:
-curl -d '{"username":"follower","desc":"Hello World!"}' -H "Content-Type:application/json" -X POST http://localhost:5000/tweet
-curl -d '{"username":"follower","desc":"123321foo"} -H Content-Type: application/json" -X POST http://localhost:5000/tweet
-curl -d '{"username":"following","desc":"aifjoasjfoja"}' -H "Content-Type:application/json" -X POST http://localhost:5000/tweet
-curl -d '{"username":"following","desc":"][][]"}' -H "Content-Type:application/json" -X POST http://localhost:5000/tweet
+curl -d '{"username":"follower","desc":"Hello World!"}' -H "Content-Type:application/json" -X POST http://127.0.0.1:5000/tweet
+curl -d '{"username":"follower","desc":"123321foo"} -H Content-Type: application/json" -X POST http://127.0.0.1:5000/tweet
+curl -d '{"username":"following","desc":"aifjoasjfoja"}' -H "Content-Type:application/json" -X POST http://127.0.0.1:5000/tweet
+curl -d '{"username":"following","desc":"][][]"}' -H "Content-Type:application/json" -X POST http://127.0.0.1:5000/tweet
 
 Test getUserTimeline:
-curl -d '{"username":"follower"}' -H "Content-Type:application /json" -X GET http://localhost:5000/user/timeline
+curl -d '{"username":"follower"}' -H "Content-Type:application /json" -X GET http://127.0.0.1:5000/user/timeline
 
