@@ -13,4 +13,5 @@ curl -d '{"username":"follower","user_followed":"following"} -H "Content-Type: a
 Test removeFollower:
 curl -d '{"username":"follower","user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/unfollow
 
-
+Test getUserTimeline:
+curl -d '{"username":"follower"}' -H "Content-Type:application /json" -X GET http://localhost:5000/user/timeline
