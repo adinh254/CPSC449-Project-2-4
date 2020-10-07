@@ -160,6 +160,18 @@ def postTweet():
     for friend in friendResult:
         friends.append(friend)
 
+@app.route('/getPublicTimeline', methods=['GET','POST'])
+def getPublicTimeline():
+    """ returns recent tweets from all users """
 
+    tweets = []
+    tweetQuery = 'SELECT TOP 25 tweet FROM timeline ORDER BY time_stamp'
+    tweetResult = query_db(tweetQuery)
+
+    for tweet in tweetResult:
+        tweets.append(tweet)
+
+    return tweets
+        
 if __name__ == '__main__':
     app.run()
