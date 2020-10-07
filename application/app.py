@@ -206,6 +206,15 @@ def remove_follower(follower_id, following_id):
     return success_string, status.HTTP_200_OK
 
 
+def get_user_id(username):
+    user_query = 'SELECT DISTINCT id FROM user WHERE username=?'
+    db = get_db()
+    user_data = query_db(user_query, (username,))
+    if len(user_data) < 1:
+        return -1
+    return user_data[0]['id']
+
+
 @app.errorhandler(404)
 def page_not_found(e):
     return "<h1>404</h1><p>The resource could not be found.</p>", 404
