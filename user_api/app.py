@@ -1,17 +1,15 @@
-import click
+import os
+
 from flask import Flask, request, jsonify, g
 from flask_api import status, exceptions
+import click
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
-from datetime import datetime
 
 
-# Constants
-MAX_COUNT = 25
-
-
-app = Flask(__name__)
-app.config.from_object('application.default_settings')
+app = Flask(__name__, instance_relative_config=True)
+# app.config.from_object('user_api.default_settings')
+app.config.from_envvar('FLASK_SETTINGS')
 
 
 # Application API
@@ -23,7 +21,8 @@ def make_dicts(cursor, row):
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db = g._database = sqlite3.connect(app.config['DATABASE'])
+        db_path = os.path.join(app.instance_path, app.config['DATABASE'])
+        db = g._database = sqlite3.connect(db_path)
         db.row_factory = make_dicts
     return db
 
@@ -47,15 +46,10 @@ def init_db():
     click.echo('Initializing the Database...')
     with app.app_context():
         db = get_db()
-        with app.open_resource('sql/schema.sql', mode='r') as f:
+        schema_path = os.path.join(app.instance_path, app.config['SCHEMA'])
+        with app.open_resource(schema_path, mode='r') as f:
             db.cursor().executescript(f.read())
             db.commit()
-
-
-@app.route('/', methods=['GET'])
-def hello():
-    return '''<h1>Distant Reading Archive</h1>
-<p>A prototype API for distant reading of science fiction novels.</p>'''
 
 
 @app.route('/api/all', methods=['GET'])
@@ -210,80 +204,6 @@ def remove_follower(follower_id, following_id):
     return success_string, status.HTTP_200_OK
 
 
-# TIMELINE MICROSERVICE
-@app.route('/user/timeline', methods=['GET'])
-def getUserTimeline():
-    request_data = request.get_json()
-
-    username = request_data['username']
-
-    #Get User id.
-    user_id = get_user_id(username)
-    if user_id == -1:
-        return 'User not found!', status.HTTP_404_NOT_FOUND
-
-    timeline_query = 'SELECT * FROM timeline WHERE user_id=? LIMIT ?'
-    recent_posts = query_db(timeline_query, (user_id, MAX_COUNT))
-    return jsonify(recent_posts), status.HTTP_200_OK
-
-
-@app.route('/public', methods=['GET'])
-def getPublicTimeline():
-    timeline_query = 'SELECT * FROM timeline LIMIT ?'
-    recent_posts = query_db(timeline_query, (MAX_COUNT,))
-    return jsonify(recent_posts), status.HTTP_200_OK
-
-
-@app.route('/home', methods=['GET'])
-def getHomeTimeline():
-    request_data = request.get_json()
-
-    username = request_data['username']
-
-    user_id = get_user_id(username)
-    if user_id == -1:
-        return 'User not found!', status.HTTP_404_NOT_FOUND
-
-    following_query = 'SELECT following_id FROM user_relations WHERE follower_id=?'
-    follow_relations = query_db(following_query, (user_id,))
-    if len(follow_relations) < 1:
-        return 'User is not following anyone!', status.HTTP_404_NOT_FOUND
-
-    # Iterate through list of dictionaries and turn it into a tuple.
-    followed_user_ids = tuple(relation['following_id'] for relation in follow_relations)
-    timeline_query = f'SELECT * FROM timeline WHERE user_id IN ({",".join("?" * len(followed_user_ids))}) LIMIT ?'
-
-    recent_posts = query_db(timeline_query, (*followed_user_ids, MAX_COUNT))
-    return jsonify(recent_posts), status.HTTP_200_OK
-
-
-@app.route('/tweet', methods=['POST'])
-def postTweet():
-    request_data = request.get_json()
-
-    username = request_data['username']
-    text = request_data['desc']
-    user_id = get_user_id(username)
-
-    if user_id == -1:
-        return 'User not found!', status.HTTP_404_NOT_FOUND
-
-    insert_query = 'INSERT INTO timeline (user_id, description) VALUES(?,?)'
-    post_data = (user_id, text)
-
-    db = get_db()
-    # Insert post data into the timeline table.
-    try:
-        db.execute(insert_query, post_data)
-    except sqlite3Error as err:
-        err_string = str(err)
-        return err_string, status.HTTP_500_INTERNAL_SERVER_ERROR
-
-    timestamp = datetime.now()
-    db.commit()
-    return f'New post on {timestamp}', status.HTTP_200_OK
-
-
 # Helper Functions
 def get_user_id(username):
     user_query = 'SELECT DISTINCT id FROM user WHERE username=?'
@@ -293,12 +213,3 @@ def get_user_id(username):
         return -1
     return user_data[0]['id']
 
-
-# Error Handling
-@app.errorhandler(404)
-def page_not_found(e):
-    return "<h1>404</h1><p>The resource could not be found.</p>", 404
-
-
-if __name__ == '__main__':
-    app.run()
