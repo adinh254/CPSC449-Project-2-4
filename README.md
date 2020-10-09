@@ -5,7 +5,7 @@ Ariosto Kuit 	(Ariostokuitak@csu.fullerton.edu) 889834065 <br/>
 Andrew Dinh	(decayingapple@csu.fullerton.edu) 893242255 <br/>
 
 
-### 0 Installation
+## 0 Installation
 Make sure you are in the project root and run:
 
 "foreman start"
