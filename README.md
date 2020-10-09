@@ -1,8 +1,8 @@
 # CPSC449 Project2
 # Authors: 
-Mauricio Macias (mauricio.macias@csu.fullerton.edu) 890741622
-Ariosto Kuit 	(Ariostokuitak@csu.fullerton.edu) 889834065
-Andrew Dinh	(decayingapple@csu.fullerton.edu) 893242255
+Mauricio Macias (mauricio.macias@csu.fullerton.edu) 890741622 <br/>
+Ariosto Kuit 	(Ariostokuitak@csu.fullerton.edu) 889834065 <br/>
+Andrew Dinh	(decayingapple@csu.fullerton.edu) 893242255 <br/>
 
 
 # Project 2
