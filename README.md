@@ -32,27 +32,27 @@ THESE ARE THE COMMANDS TO TEST AND USE RIGHT AFTER YOU RUN OUR PROGRAM
 
 User Services
 Test createUser:
- curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user 
+ curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5100/user 
 
 **Output:** {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
 
 
-curl -d '{"username":"following", "email":"following@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user 
+curl -d '{"username":"following", "email":"following@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5100/user 
 
 Test authorize:
- curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5000/user/auth 
+ curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5100/user/auth 
 
 **Output:**  
 [{"password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559"}]
 
 Test addFollower:
- curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/follow 
+ curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5100/follow 
 
 **Output:**  
 User 7 is now following User 6.
 
 
-Test removeFollower: curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/unfollow
+Test removeFollower: curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5100/unfollow
 
 **Output:**  
 User 7 has unfollowed User 6.
