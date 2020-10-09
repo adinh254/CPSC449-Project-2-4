@@ -58,7 +58,7 @@ def init_db():
             db.cursor().executescript(f.read())
             db.commit()
 
-
+# Returns recent tweets from a user.
 # Timeline Microservice
 @app.route('/user/timeline', methods=['GET'])
 def getUserTimeline():
@@ -76,13 +76,14 @@ def getUserTimeline():
     return jsonify(recent_posts), status.HTTP_200_OK
 
 
+# returns recent tweets from all users
 @app.route('/public', methods=['GET'])
 def getPublicTimeline():
     timeline_query = 'SELECT * FROM timeline LIMIT ?'
     recent_posts = query_db(timeline_query, (MAX_COUNT,))
     return jsonify(recent_posts), status.HTTP_200_OK
 
-
+# returns recents tweets from all users that this user follows.
 @app.route('/home', methods=['GET'])
 def getHomeTimeline():
     request_data = request.get_json()
@@ -105,9 +106,10 @@ def getHomeTimeline():
     recent_posts = query_db(timeline_query, (*followed_user_ids, MAX_COUNT))
     return jsonify(recent_posts), status.HTTP_200_OK
 
-
+#post a new tweet.
 @app.route('/tweet', methods=['POST'])
 def postTweet():
+    # get username and tweet
     request_data = request.get_json()
 
     username = request_data['username']
@@ -116,7 +118,8 @@ def postTweet():
 
     if user_id == -1:
         return 'User not found!', status.HTTP_404_NOT_FOUND
-
+    
+    # Query is here
     insert_query = 'INSERT INTO timeline (user_id, description) VALUES(?,?)'
     post_data = (user_id, text)
 
@@ -132,7 +135,7 @@ def postTweet():
     db.commit()
     return f'New post on {timestamp}', status.HTTP_200_OK
 
-
+# Query to get username
 # Helper Functions
 def get_user_id(username):
     user_query = 'SELECT DISTINCT id FROM user WHERE username=?'
