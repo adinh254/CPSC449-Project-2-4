@@ -1,7 +1,8 @@
 # Mauricio Macias     (mauricio.macias@csu.fullerton.edu) 890741622
 # Ariosto Kuit        (Ariostokuitak@csu.fullerton.edu) 889834065
 # Andrew Dinh    (decayingapple@csu.fullerton.edu) 893242255
-# CPSC449: PROJECT 2import os
+# CPSC449: PROJECT 2
+import os
 
 from flask import Flask, request, jsonify, g
 from flask_api import status, exceptions

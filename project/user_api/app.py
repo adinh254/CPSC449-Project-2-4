@@ -1,3 +1,7 @@
+# Mauricio Macias     (mauricio.macias@csu.fullerton.edu) 890741622
+# Ariosto Kuit        (Ariostokuitak@csu.fullerton.edu) 889834065
+# Andrew Dinh    (decayingapple@csu.fullerton.edu) 893242255
+# CPSC449: PROJECT 2
 import os
 
 from flask import Flask, request, jsonify, g
@@ -13,11 +17,13 @@ app = Flask(__name__, instance_relative_config=True)
 
 # Application API
 def make_dicts(cursor, row):
+    # Converts tuples into a dictionary.
     return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
 
 
 def get_db():
+    # Returns the current global database.
     db = getattr(g, '_database', None)
     if db is None:
         temp_path = os.path.join(app.instance_path, 'tmp')
@@ -30,12 +36,14 @@ def get_db():
 
 @app.teardown_appcontext
 def close_connection(exception):
+    # Closes the database before the api context is killed.
     db = getattr(g, '_database', None)
     if db is not None:
         db.close()
 
 
 def query_db(query, args=(), one=False):
+    # Takes in a query string with its respective arguments and returns the resulting table.
     cur = get_db().execute(query, args)
     rv = cur.fetchall()
     cur.close()
@@ -44,6 +52,7 @@ def query_db(query, args=(), one=False):
 
 @app.cli.command('init')
 def init_db():
+    # Initializes a new database according to this service's schema file.
     click.echo('Initializing the Database...')
     with app.app_context():
         db = get_db()
@@ -54,6 +63,8 @@ def init_db():
 
 @app.route('/api/all', methods=['GET'])
 def api_all():
+    # For debugging purposes.
+    # Returns all rows of users.
     all_users = query_db('SELECT * FROM user;')
     return jsonify(all_users)
 
@@ -61,6 +72,7 @@ def api_all():
 # Users Microservice
 @app.route('/user', methods=['GET', 'POST'])
 def user():
+    # Checks the type of request method before executing a service command.
     if request.method == 'POST':
         return create_user()
 
@@ -206,6 +218,7 @@ def remove_follower(follower_id, following_id):
 
 # Helper Functions
 def get_user_id(username):
+    # Gets the associated id integer from the given username.
     user_query = 'SELECT DISTINCT id FROM user WHERE username=?'
     db = get_db()
     user_data = query_db(user_query, (username,))
