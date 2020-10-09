@@ -1,17 +1,14 @@
-# CPSC449 Project2
+# CPSC449 - Project2
 # Authors: 
 Mauricio Macias (mauricio.macias@csu.fullerton.edu) 890741622 <br/>
 Ariosto Kuit 	(Ariostokuitak@csu.fullerton.edu) 889834065 <br/>
 Andrew Dinh	(decayingapple@csu.fullerton.edu) 893242255 <br/>
 
 
-# Project 2
+### 0 Installation
+Make sure you are in the project root and run:
 
-
-### 1 Installation
-Using the Procfile, make sure you are in the project root and run:
-
-foreman start
+"foreman start"
 
 To run both microservice processes.
 
@@ -19,8 +16,9 @@ To run both microservice processes.
 
 For this project we build two back-end microservices with Flask for a microblogging service similar to Twitter. 
 
-This project was completed by 3 people. Whose names are listed in the very top of this paper.  
+This project was completed by 3 people. Whose names are listed in the very top of this paper.
 
+For this assignment we are tasked to write two separate Flask application(microservies) to a singe SQLite Version 3 database. The first microservice will be called "User" where it will be task to create a user, authenticate user, add a follower, and remove a follower. The second microservice will be called "Timeslines" where it get the users timeline, get the everyones timeline, get followers timeline, and post tweets.
 
 ## 2 Database
 We used SQLITE3 as our main database as assigned in the project. We created a file called ‘schema.sql’, which holds all of our tables for each microservices. The sql file contains 3 tables: user, user_relations, and timeline. The file includes a foreign key for the user timeline to access the other tables. The user table includes an integer called ‘id’ which is also a primary key, a unique text or string called ‘username’, a unique text called ‘email’, and a text called ‘password’.
@@ -30,7 +28,7 @@ The user_relations table includes an id variable similar to the user table, two 
 
 # start the services
 
-THESE ARE THE COMMANDS TO TEST AND USE 
+THESE ARE THE COMMANDS TO TEST AND USE RIGHT AFTER YOU RUN OUR PROGRAM
 
 User Services
 Test createUser:
