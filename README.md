@@ -26,7 +26,7 @@ We used SQLITE3 as our main database as assigned in the project. We created a fi
 The user_relations table includes an id variable similar to the user table, two integers called ‘follower’ and ‘following’, and a unique(follower, following). Finally the timeline table includes an integer ‘id’ similar to the user table, an integer called ‘user_id’, a timestamp called ‘time_stamp’ and a text called ‘tweet’. After initializing the tables, the file then inserts the user table with values for username, email, and password variables.
 
 
-# start the services
+## 3 Test Cases
 
 THESE ARE THE COMMANDS TO TEST AND USE RIGHT AFTER YOU RUN OUR PROGRAM
 
@@ -34,7 +34,7 @@ User Services
 Test createUser:
  curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user 
 
-Output: {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
+*Output: {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
 
 
 curl -d '{"username":"following", "email":"following@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user 
