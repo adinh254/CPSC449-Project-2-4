@@ -34,7 +34,7 @@ User Services
 Test createUser:
  curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user 
 
-*Output: {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
+**Output:** {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
 
 
 curl -d '{"username":"following", "email":"following@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user 
@@ -42,67 +42,68 @@ curl -d '{"username":"following", "email":"following@gmail.com", "password":"wor
 Test authorize:
  curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5000/user/auth 
 
-Output: [{"password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559"}]
+**Output:**  
+[{"password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559"}]
 
 Test addFollower:
  curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/follow 
 
-Output: 
+**Output:**  
 User 7 is now following User 6.
 
 
 Test removeFollower: curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5000/unfollow
 
-Output: 
+**Output:**  
 User 7 has unfollowed User 6.
 
-Timeline Services 
+**Timeline Services **
 
 Test postTweets:
  curl -d '{"username":"follower", "desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet 
 
-Output:
+**Output:** 
 New post on 2020-10-07 14:55:04.927286
 
 curl -d '{"username":"follower", "desc":"123321foo"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet
 
-Output: 
+**Output:**  
 New post on 2020-10-07 14:56:25.477762
 
 curl -d '{"username":"following", "desc":"aifjoasjfoja"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet
 
-Ouput:
+**Output:** 
 New post on 2020-10-07 15:06:17.312504
 
  curl -d '{"username":"following", "desc":"][][]"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet 
 
-Output: 
+**Output:**  
 New post on 2020-10-07 15:05:15.194121
 
 Test getUserTImeline: 
 curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5000/user/timeline
 
-Ouput:
+**Output:** 
 [{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5}]
 
 
 Test getHomeTimeline:
 curl -d ‘{“username”:”follower”}’ -H “Content-Type: application/json" -X GET http://localhost:5000/home
 
-Output:
+**Output:** 
 [{"description":"aifjoasjfoja","id":5,"time_stamp":"2020-10-07 05:59:29","user_id":6},{"description":"][][]","id":8,"time_stamp":"2020-10-07 22:05:15","user_id":6},{"description":"aifjoasjfoja","id":9,"time_stamp":"2020-10-07 22:06:17","user_id":6}]
 
 
 Test getUserTimeline:
 curl -d ‘{“username”:”follower”}’ -H “Content-Type: application/json" -X GET http://localhost:5000/user/timeline
 
-Output: 
+**Output:**  
 [{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5}]
 
 Test getPublicTimeline:
 curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5000/public
 
-Output:
+**Output:** 
 [{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"aifjoasjfoja","id":5,"time_stamp":"2020-10-07 05:59:29","user_id":6},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5},{"description":"][][]","id":8,"time_stamp":"2020-10-07 22:05:15","user_id":6},{"description":"aifjoasjfoja","id":9,"time_stamp":"2020-10-07 22:06:17","user_id":6}]
 
 Explanation
@@ -114,7 +115,7 @@ Curl is a tool to transfer data from or to a server, using supported protocols.
 -H stands for headers to supply with request
 -X stands for the request method to use
  
-User Services
+**User Services**
 
 Under “Test createUser:” we used curl to transfer data by using -d. The values are correlated with the variables username, email, and password. The variable username takes the value “follower”, variable email takes the value “follower@gmail.com”, and variable password takes the value “world123”. We then used -H to supply with a request for the “Content-Type: application/json” and then used -X to request the method POST to http://localhost :5000/user.
 The command is called again but instead of “follower” and “follwer@gmail.com” as the values inputted, the variables email and username use “following” and “following@gmail.com”. Then the command is sent to the same server.
@@ -125,7 +126,7 @@ Under “Test addFollower”, curl is used to transfer data with -d. The data is
 
 Under “Test removeFollower”, curl is used to transfer data with -d. The data is ‘{“username”:”follower”,”user_followed”:”following””}. With -H, we request for the content type of application/json with -X to POST to http://localhost:5000/unfollow
 
-Timeline Services
+**Timeline Services**
 
 Under “Test postTweets”, curl is used to transfer data with -d. The data is '{"username":"follower", "desc":"Hello World!"}'. With -H, we request for application/json and then used -X to POST to http://localhost:5000/tweet. The other 3 curl commands are to test with the values with the variable username with either “follower” or “following”.
 
