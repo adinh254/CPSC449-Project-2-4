@@ -30,61 +30,73 @@ The user_relations table includes an id variable similar to the user table, two 
 
 THESE ARE THE COMMANDS TO TEST AND USE RIGHT AFTER YOU RUN OUR PROGRAM
 
-User Services
-Test createUser:
- curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5100/user 
+**User Services**
+**Test createUser:**
+curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5100/user 
 
 **Output:** {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
 
+curl -d '{"username":"follower2", "email":"follower2@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5100/user 
 
-curl -d '{"username":"following", "email":"following@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5100/user 
+**Output:** 
+{"email":"follower2@gmail.com","password":"pbkdf2:sha256:150000$UvbCKBQ1$1ffd1a706311e93694a71fa07053e7a2fd1b482bf0f8d9979d18660a786d2059","username":"follower2"}
 
-Test authorize:
- curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5100/user/auth 
+curl -d '{"username":"follower3", "email":"follower3@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5100/user
+
+**Output:**
+{"email":"follower3@gmail.com","password":"pbkdf2:sha256:150000$33rKoL2D$35461a464f96a37eddcc4423a4d0465e577da935f642bef2505477ffa404e864","username":"follower3"}
+
+curl -d '{"username":"follower4", "email":"follower4@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5100/user
+
+**Output:**
+{"email":"follower4@gmail.com","password":"pbkdf2:sha256:150000$RvE54Tmz$a7cb0ba19970df61e8d721707dff0401cd91e84ad7d504d007eced106c42c91e","username":"follower4"}
+
+**Test authorize:**
+curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5100/user/auth 
 
 **Output:**  
-[{"password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559"}]
+[{"password":"pbkdf2:sha256:150000$9Pnxfbzd$96d3ec6a7deeea595ab8c04ec86a1a0c81df2b9a029d07c9500329fd49f2584e"}]
 
-Test addFollower:
- curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5100/follow 
-
-**Output:**  
-User 7 is now following User 6.
-
-
-Test removeFollower: curl -d '{"username":"follower1", "user_followed":"following"}' -H "Content-Type: application/json" -X POST http://localhost:5100/unfollow
+**Test addFollower:**
+curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5100/follow 
 
 **Output:**  
-User 7 has unfollowed User 6.
+User 5 is now following User 6.
+
+**Test removeFollower:**
+curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5100/unfollow
+
+**Output:**  
+User 5 has unfollowed User 6.
 
 **Timeline Services **
 
-Test postTweets:
- curl -d '{"username":"follower", "desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet 
-
+**Test postTweets:**
+curl -d '{"username":"follower1", "desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet 
+ 
 **Output:** 
-New post on 2020-10-07 14:55:04.927286
+New post on 2020-10-08 21:25:05.009080
 
-curl -d '{"username":"follower", "desc":"123321foo"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet
+curl -d '{"username":"follower2", "desc":"123321foo"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet
 
 **Output:**  
-New post on 2020-10-07 14:56:25.477762
+New post on 2020-10-08 21:25:45.706694
 
-curl -d '{"username":"following", "desc":"aifjoasjfoja"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet
+curl -d '{"username":"follower3", "desc":"hey bro"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet
 
 **Output:** 
-New post on 2020-10-07 15:06:17.312504
+New post on 2020-10-08 21:31:24.725983
 
- curl -d '{"username":"following", "desc":"][][]"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet 
+curl -d '{"username":"follower4", "desc":"][][]"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet 
 
 **Output:**  
-New post on 2020-10-07 15:05:15.194121
+New post on 2020-10-08 21:34:24.924378
 
-Test getUserTImeline: 
+**Test getUserTimeline:**
 curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5200/user/timeline
 
 **Output:** 
-[{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5}]
+[{"description":"Hello World!","id":1,"time_stamp":"2020-10-09 04:25:05","user_id":5},{"description":"Yea bro","id":6,"time_stamp":"2020-10-09 04:46:12","user_id":5}]
 
 
 Test getHomeTimeline:
