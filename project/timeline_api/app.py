@@ -13,7 +13,6 @@ MAX_COUNT = 25
 
 app = Flask(__name__, instance_relative_config=True)
 # app.config.from_object('timeline_api.default_settings')
-app.config.from_envvar('FLASK_SETTINGS')
 
 
 # Application API
@@ -21,12 +20,13 @@ def make_dicts(cursor, row):
     return dict((cursor.description[idx][0], value)
                 for idx, value in enumerate(row))
 
-
 def get_db():
     db = getattr(g, '_database', None)
     if db is None:
-        db_path = os.path.join(app.instance_path, app.config['DATABASE'])
-        db = g._database = sqlite3.connect(db_path)
+        temp_path = os.path.join(app.instance_path, 'tmp')
+        if not os.path.exists(temp_path):
+            os.makedirs(temp_path)
+        db = g._database = sqlite3.connect(os.path.join(temp_path, 'CPSC449.db'))
         db.row_factory = make_dicts
     return db
 
@@ -50,14 +50,12 @@ def init_db():
     click.echo('Initializing the Database...')
     with app.app_context():
         db = get_db()
-        schema_path = os.path.join(app.instance_path, app.config['SCHEMA'])
-        with app.open_resource(schema_path, mode='r') as f:
+        with app.open_resource('sql/schema.sql', mode='r') as f:
             db.cursor().executescript(f.read())
             db.commit()
 
 
-
-# TIMELINE MICROSERVICE
+# Timeline Microservice
 @app.route('/user/timeline', methods=['GET'])
 def getUserTimeline():
     request_data = request.get_json()
