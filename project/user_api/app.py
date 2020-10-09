@@ -207,6 +207,7 @@ def add_follower(follower_id, following_id):
 
 
 def remove_follower(follower_id, following_id):
+    # Stop following a user.
     delete_query = 'DELETE FROM user_relations WHERE follower_id=? AND following_id=?'
     db = get_db()
     cur = db.execute(delete_query, (follower_id, following_id))
