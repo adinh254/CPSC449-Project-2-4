@@ -60,48 +60,48 @@ User 7 has unfollowed User 6.
 **Timeline Services **
 
 Test postTweets:
- curl -d '{"username":"follower", "desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet 
+ curl -d '{"username":"follower", "desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet 
 
 **Output:** 
 New post on 2020-10-07 14:55:04.927286
 
-curl -d '{"username":"follower", "desc":"123321foo"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet
+curl -d '{"username":"follower", "desc":"123321foo"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet
 
 **Output:**  
 New post on 2020-10-07 14:56:25.477762
 
-curl -d '{"username":"following", "desc":"aifjoasjfoja"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet
+curl -d '{"username":"following", "desc":"aifjoasjfoja"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet
 
 **Output:** 
 New post on 2020-10-07 15:06:17.312504
 
- curl -d '{"username":"following", "desc":"][][]"}' -H "Content-Type: application/json" -X POST http://localhost:5000/tweet 
+ curl -d '{"username":"following", "desc":"][][]"}' -H "Content-Type: application/json" -X POST http://localhost:5200/tweet 
 
 **Output:**  
 New post on 2020-10-07 15:05:15.194121
 
 Test getUserTImeline: 
-curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5000/user/timeline
+curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5200/user/timeline
 
 **Output:** 
 [{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5}]
 
 
 Test getHomeTimeline:
-curl -d ‘{“username”:”follower”}’ -H “Content-Type: application/json" -X GET http://localhost:5000/home
+curl -d ‘{“username”:”follower”}’ -H “Content-Type: application/json" -X GET http://localhost:5200/home
 
 **Output:** 
 [{"description":"aifjoasjfoja","id":5,"time_stamp":"2020-10-07 05:59:29","user_id":6},{"description":"][][]","id":8,"time_stamp":"2020-10-07 22:05:15","user_id":6},{"description":"aifjoasjfoja","id":9,"time_stamp":"2020-10-07 22:06:17","user_id":6}]
 
 
 Test getUserTimeline:
-curl -d ‘{“username”:”follower”}’ -H “Content-Type: application/json" -X GET http://localhost:5000/user/timeline
+curl -d ‘{“username”:”follower”}’ -H “Content-Type: application/json" -X GET http://localhost:5200/user/timeline
 
 **Output:**  
 [{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5}]
 
 Test getPublicTimeline:
-curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5000/public
+curl -d '{"username":"follower"}' -H "Content-Type: application/json" -X GET http://localhost:5200/public
 
 **Output:** 
 [{"description":"Hello World!","id":1,"time_stamp":"2020-10-07 04:06:16","user_id":5},{"description":"Hello World!","id":2,"time_stamp":"2020-10-07 04:18:41","user_id":5},{"description":"Hello World!","id":3,"time_stamp":"2020-10-07 04:21:33","user_id":5},{"description":"Hello World!","id":4,"time_stamp":"2020-10-07 04:26:30","user_id":5},{"description":"aifjoasjfoja","id":5,"time_stamp":"2020-10-07 05:59:29","user_id":6},{"description":"Hello World!","id":6,"time_stamp":"2020-10-07 21:55:04","user_id":5},{"description":"123321foo","id":7,"time_stamp":"2020-10-07 21:56:25","user_id":5},{"description":"][][]","id":8,"time_stamp":"2020-10-07 22:05:15","user_id":6},{"description":"aifjoasjfoja","id":9,"time_stamp":"2020-10-07 22:06:17","user_id":6}]
