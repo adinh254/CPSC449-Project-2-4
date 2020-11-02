@@ -16,6 +16,28 @@ app.config.from_envvar('APP_CONFIG')
 
 upstream = app.config['UPSTREAM']
 
+services = {
+    'user': [app.config['USER_0'], app.config['USER_1'], app.config['USER_2']]
+    'timeline': [app.config['TIMELINES_0'], app.config['TIMELINES_1'], app.config['TIMELINES_2']]
+}
+
+
+def rotate_service_hosts(service_name):
+    # Cycle the service's hosts name for round robin.
+    service_hosts = services[service_name]
+    service_hosts.append(service_hosts.pop(0))
+    return service_hosts
+
+
+@app.route('/<service>', methods=['GET', 'POST'])
+def call_service(service):
+    service_hosts = rotate_service_hosts(service)
+    service_url = service_hosts[0]
+    response = requests.Request(method=flask.request.method, url=service_url, json=flask.request.get_json())
+    if 500 <= response.status_code <= 599:
+        service_hosts.pop(0)
+    return response.status_code
+
 
 @app.errorhandler(404)
 def route_page(err):
