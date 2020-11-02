@@ -78,6 +78,7 @@ def user():
 
 
 def create_user():
+    # Registers a new user account.
     user_data = request.get_json()
     post_fields = {*user_data.keys()}
     required_fields = {'username', 'email', 'password'}
@@ -109,7 +110,7 @@ def create_user():
 
 @app.route('/user/auth', methods=['GET'])
 def auth():
-    # get data from user
+    # Returns true if the supplied password matches the hashed password stored for that username in the database.
     request_data = request.get_json()
 
     username = request_data['username']
@@ -138,17 +139,20 @@ def auth():
 
 @app.route('/follow', methods=['POST'])
 def follow():
+    # Start following a new user.
     user_ids = get_relation_ids()
     return add_follower(*user_ids)
 
 
 @app.route('/unfollow', methods=['POST'])
 def unfollow():
+    # Stop following a user.
     user_ids = get_relation_ids()
     return remove_follower(*user_ids)
 
 
 def get_relation_ids():
+    # Fetches the ids of both the follower and the user they are following and returns it as a tuple.
     relation_data = request.get_json()
     post_fields = {*relation_data.keys()}
     required_fields = {'username', 'user_followed'}
@@ -187,6 +191,7 @@ def get_relation_ids():
 
 
 def add_follower(follower_id, following_id):
+    # Start following a new user.
     insert_query = 'INSERT INTO user_relations (follower_id, following_id) VALUES (?, ?)'
     db = get_db()
     try:
@@ -202,6 +207,7 @@ def add_follower(follower_id, following_id):
 
 
 def remove_follower(follower_id, following_id):
+    # Stop following a user.
     delete_query = 'DELETE FROM user_relations WHERE follower_id=? AND following_id=?'
     db = get_db()
     cur = db.execute(delete_query, (follower_id, following_id))
