@@ -29,14 +29,11 @@ def rotate_service_hosts(service_name):
     return service_hosts
 
 
-@app.route('/<service>', methods=['GET', 'POST'])
-def call_service(service):
+@app.route('/<service>/<query>', methods=['GET', 'POST'])
+def call_service(service, query=''):
     service_hosts = rotate_service_hosts(service)
-    service_url = service_hosts[0] + '/' + str(service)
-    print(service_url)
+    service_url = service_hosts[0] + '/' + service + query
     response = requests.request(method=flask.request.method, url=service_url, json=flask.request.get_json())
-    print(flask.request.get_json())
-    print(response.status_code)
     if 500 <= response.status_code <= 599:
         service_hosts.pop(0)
     return str(response.status_code)
