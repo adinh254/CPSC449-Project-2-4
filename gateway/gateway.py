@@ -23,6 +23,11 @@ services = {
 }
 
 
+@app.route('/')
+def health_check():
+    return f'Server is healthy!', status.HTTP_200_OK
+
+
 def rotate_hosts(service_name):
     # Cycle the service's hosts name for round robin.
     hosts = services[service_name]
@@ -33,29 +38,28 @@ def rotate_hosts(service_name):
 @app.route('/<service>', methods=['GET', 'POST'])
 @app.route('/<service>/<query>', methods=['GET', 'POST'])
 def call_service(service, query=None):
-    if service in services:
-        hosts = services[service]
-        if len(hosts) < 1:
-            return f'Service {service} has no hosts.', status.HTTP_502_GATEWAY
+    if service not in services:
+        return f'ERROR HTTP 404: Service {service} does not exist.', status.HTTP_404_NOT_FOUND
 
+    url_path = '/' + '/'.join(filter(None, (service, query)))
+    hosts = services[service]
+
+    while len(hosts) > 0:
         current_host = hosts[0]
-        hosts = rotate_hosts(service)
-        service_url = current_host + '/' + service
-        if query != None:
-            service_url += '/' + query
-
-        while len(hosts) > 0:
-            try:
-                response = requests.request(method=flask.request.method, url=service_url, json=flask.request.get_json())
-                return response.json(), status.HTTP_200_OK
-            except requests.exceptions.RequestException as e:
-                status_code = e.response.status_code
-                if 500 <= status_code <= 599:
-                    removed_host = service_hosts.pop(0)
-                    print(f'Connection Refused: Removed {removed_host}, from service host pool.')
-                else:
-                    return e, status_code
-    return f'Service {service} does not exist.', status.HTTP_404_NOT_FOUND
+        print(f'Connecting to host: {current_host}.')
+        request_url = current_host + url_path
+        try:
+            response = requests.request(method=flask.request.method, url=request_url, json=flask.request.get_json())
+            hosts = rotate_hosts(service)
+            response.raise_for_status()
+            return response.json(), status.HTTP_200_OK
+        except requests.exceptions.HTTPError as errh:
+            status_code = errh.response.status_code
+            return f'ERROR HTTP {status_code}: {current_host} request failed.'
+        except requests.exceptions.ConnectionError:
+            removed_host = hosts.pop(0)
+            print(f'ERROR Connection: {removed_host} is not responding and was removed from the server pool.')
+    return 'ERROR HTTP 502: Unable to get valid responses from any servers.', status.HTTP_502_BAD_GATEWAY
 
 
 @app.errorhandler(404)
