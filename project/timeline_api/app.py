@@ -60,7 +60,7 @@ def init_db():
 
 # Returns recent tweets from a user.
 # Timeline Microservice
-@app.route('/user/timeline', methods=['GET'])
+@app.route('/timeline/user', methods=['GET'])
 def getUserTimeline():
     request_data = request.get_json()
 
@@ -77,14 +77,14 @@ def getUserTimeline():
 
 
 # returns recent tweets from all users
-@app.route('/public', methods=['GET'])
+@app.route('/timeline/public', methods=['GET'])
 def getPublicTimeline():
     timeline_query = 'SELECT * FROM timeline LIMIT ?'
     recent_posts = query_db(timeline_query, (MAX_COUNT,))
     return jsonify(recent_posts), status.HTTP_200_OK
 
 # returns recents tweets from all users that this user follows.
-@app.route('/home', methods=['GET'])
+@app.route('/timeline/home', methods=['GET'])
 def getHomeTimeline():
     request_data = request.get_json()
 
@@ -107,7 +107,7 @@ def getHomeTimeline():
     return jsonify(recent_posts), status.HTTP_200_OK
 
 #post a new tweet.
-@app.route('/tweet', methods=['POST'])
+@app.route('/timeline/tweet', methods=['POST'])
 def postTweet():
     # get username and tweet
     request_data = request.get_json()
