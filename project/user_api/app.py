@@ -137,14 +137,14 @@ def auth():
     return jsonify(user_rows), status.HTTP_200_OK
 
 
-@app.route('/follow', methods=['POST'])
+@app.route('/user/follow', methods=['POST'])
 def follow():
     # Start following a new user.
     user_ids = get_relation_ids()
     return add_follower(*user_ids)
 
 
-@app.route('/unfollow', methods=['POST'])
+@app.route('/user/unfollow', methods=['POST'])
 def unfollow():
     # Stop following a user.
     user_ids = get_relation_ids()
