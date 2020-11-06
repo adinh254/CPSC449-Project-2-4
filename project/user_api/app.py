@@ -10,7 +10,6 @@ import click
 import sqlite3
 from werkzeug.security import generate_password_hash, check_password_hash
 
-
 app = Flask(__name__, instance_relative_config=True)
 # app.config.from_object('user_api.default_settings')
 
@@ -70,13 +69,18 @@ def api_all():
 
 
 # Users Microservice
-@app.route('/user', methods=['GET', 'POST'])
-def user():
+# def user():
     # Checks the type of request method before executing a service command.
-    if request.method == 'POST':
-        return create_user()
+#    if request.method == 'POST':
+#        return create_user()
 
 
+@app.route('/user')
+def health_check():
+    return "User server is healthy!", status.HTTP_200_OK
+
+
+@app.route('/user/create', methods=['POST'])
 def create_user():
     # Registers a new user account.
     user_data = request.get_json()
@@ -105,6 +109,7 @@ def create_user():
         return err_string, status.HTTP_409_CONFLICT
     db.commit()
     user_data['password'] = hashed
+
     return user_data, status.HTTP_200_OK
 
 
@@ -118,7 +123,7 @@ def auth():
 
     user_id = get_user_id(username)
     if user_id == -1:
-        return 'User not found!', status.HTTP_404_NOT_FOUND
+        return 'User not found!', status.HTTP_401_UNAUTHORIZED
 
     user_query = "SELECT password FROM user WHERE id=?"
 
@@ -133,13 +138,14 @@ def auth():
     is_valid = check_password_hash(hashed_password, password)
 
     if not is_valid:
-        return 'Password is invalid!', status.HTTP_401_FORBIDDEN
-    return jsonify(user_rows), status.HTTP_200_OK
+        return 'Password is invalid!', status.HTTP_401_UNAUTHORIZED
+    return 'Authentication Success!', status.HTTP_200_OK
 
 
 @app.route('/user/follow', methods=['POST'])
 def follow():
     # Start following a new user.
+    request_json
     user_ids = get_relation_ids()
     return add_follower(*user_ids)
 
