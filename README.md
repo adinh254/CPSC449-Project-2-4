@@ -30,9 +30,80 @@ The user_relations table includes an id variable similar to the user table, two 
 
 THESE ARE THE COMMANDS TO TEST AND USE RIGHT AFTER YOU RUN OUR PROGRAM
 
+// project 4
+
+start program
+foreman start -m "gateway=1,users=3,timelines=3"
+
+remove all flask process: 
+kill $(ps aux | grep -E 'flask' | grep -v grep | awk '{print $2}')
+
+## Create user and auth does not have to get pass through the gateway
+**testing create user**
+curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user/create
+output: {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$IpniaJgR$fcabdd8415da9b2dd96e11c764d8eb9bbfc530c0f77e3fd634690132c4619935","username":"follower1"}
+
+curl -d '{"username":"follower2", "email":"follower2@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/create
+output: {"email":"follower2@gmail.com","password":"pbkdf2:sha256:150000$3mc92QF8$11978630b2143e9cadc069518a75bc55b95fe917dc7c4800a06159880715883d","username":"follower2"}
+
+**testing auth**
+curl -u follower1:world123 -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user/auth
+
+curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user/auth
+
+## If its not authorized then the program will output a 401 unAuthorization Error like this
+**testing follow user**
+curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
+output: ERROR HTTP 401: Authorization headers are missing or are not in Basic format.
+
+curl -u follower1:world123 -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
+output: {"follower":5,"following":6}
+**testing unfollow user**
+### Without Auth
+curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/unfollow
+output: ERROR HTTP 401: Authorization headers are missing or are not in Basic format.
+
+### With Auth
+curl -u follower1:world123 -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/unfollow
+output: {"follower":5,"following":6}
+
+curl -u follower1:world123 -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
+
+**testing tweet**
+curl -u follower1:world123 -d '{"username":"follower1", "desc":"Hello World!"}' -H "Content-Type: application/json" -X POST http://localhost:5000/timeline/tweet
+output: {"desc":"Hello World!","time":"Thu, 24 Dec 2020 14:25:37 GMT","user":5}
+
+curl -u follower2:world123 -d '{"username":"follower2", "desc":"Hello Follower1!"}' -H "Content-Type: application/json" -X POST http://localhost:5000/timeline/tweet
+output: {"desc":"Hello Follower1!","time":"Thu, 24 Dec 2020 14:25:46 GMT","user":6}
+
+**testing home tweet**
+curl -u follower1:world123 -d '{"username":"follower1"}' -H "Content-Type: application/json" -X GET http://localhost:5000/timeline/home
+
+**testing public tweet**
+curl -u follower1:world123 -d '{"username":"follower1"}' -H "Content-Type: application/json" -X GET http://localhost:5000/timeline/public
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 **User Services**
 **Test createUser:**
 curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5100/user 
+
+
+curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user/create
+
+curl -d '{"username":"follower2", "email":"follower2@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/create
+
 
 **Output:** {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$z4E0juOd$4e6edc229ab741b95d1ad487f4a66ba549b1f87a77fb93eb2cfe568f8a0c9559","username":"follower1"}
 
@@ -54,11 +125,14 @@ curl -d '{"username":"follower4", "email":"follower4@gmail.com", "password":"wor
 **Test authorize:**
 curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5100/user/auth 
 
+curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://localhost:5100/user/auth
 **Output:**  
 [{"password":"pbkdf2:sha256:150000$9Pnxfbzd$96d3ec6a7deeea595ab8c04ec86a1a0c81df2b9a029d07c9500329fd49f2584e"}]
 
 **Test addFollower:**
-curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5100/follow 
+//curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5100/follow 
+// correct
+curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
 
 **Output:**  
 User 5 is now following User 6.

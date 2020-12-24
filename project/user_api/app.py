@@ -75,7 +75,7 @@ def api_all():
 #        return create_user()
 
 
-@app.route('/user')
+@app.route('/user/home')
 def health_check():
     return "User server is healthy!", status.HTTP_200_OK
 
@@ -94,6 +94,7 @@ def create_user():
     username = user_data['username']
     email = user_data['email']
     password = user_data['password']
+    print(email)
 
     hashed = generate_password_hash(password, method='pbkdf2:sha256')
 
@@ -105,10 +106,14 @@ def create_user():
     except sqlite3.Error as err:
         err_string = str(err)
         if 'UNIQUE' not in err_string:
+            print(err_string)
+            print(new_user)
             return err_string, status.HTTP_500_INTERNAL_SERVER_ERROR
+        
         return err_string, status.HTTP_409_CONFLICT
     db.commit()
     user_data['password'] = hashed
+    
 
     return user_data, status.HTTP_200_OK
 
@@ -145,7 +150,6 @@ def auth():
 @app.route('/user/follow', methods=['POST'])
 def follow():
     # Start following a new user.
-    request_json
     user_ids = get_relation_ids()
     return add_follower(*user_ids)
 
@@ -208,8 +212,8 @@ def add_follower(follower_id, following_id):
             return err_string, status.HTTP_500_INTERNAL_SERVER_ERROR
         return err_string, status.HTTP_409_CONFLICT
     db.commit()
-    success_string = f'User {follower_id} is now following User {following_id}.'
-    return success_string, status.HTTP_200_OK
+    # success_string = f'User {follower_id} is now following User {following_id}.'
+    return jsonify(follower=follower_id, following=following_id), status.HTTP_200_OK
 
 
 def remove_follower(follower_id, following_id):
@@ -224,8 +228,8 @@ def remove_follower(follower_id, following_id):
     assert rows_deleted < 2, "Duplicate follow relations should not exist!"
 
     db.commit()
-    success_string = f'User {follower_id} has unfollowed User {following_id}.'
-    return success_string, status.HTTP_200_OK
+    # success_string = f'User {follower_id} has unfollowed User {following_id}.'
+    return jsonify(follower=follower_id, following=following_id), status.HTTP_200_OK
 
 
 # Helper Functions

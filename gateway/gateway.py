@@ -85,7 +85,7 @@ def call_service(service, query=None):
             response = requests.request(method=flask.request.method, url=request_url, json=flask.request.get_json())
             hosts = rotate_hosts(service)
             response.raise_for_status()
-            return "Request Status HTTP 200 OK", status.HTTP_200_OK
+            return response.json(), status.HTTP_200_OK
         except requests.exceptions.HTTPError as errh:
             status_code = errh.response.status_code
             return f'ERROR HTTP {status_code}: {current_host} request failed.'
