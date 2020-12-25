@@ -104,9 +104,7 @@ def getHomeTimeline():
     timeline_query = f'SELECT * FROM timeline WHERE user_id IN ({",".join("?" * len(followed_user_ids))}) LIMIT ?'
 
     recent_posts = query_db(timeline_query, (*followed_user_ids, MAX_COUNT))
-    strpost = ' '.join(map(str, recent_posts))
-    return jsonify(posts=strpost), status.HTTP_200_OK
-    # return jsonify(recent_posts), status.HTTP_200_OK
+    return jsonify(recent_posts), status.HTTP_200_OK
 
 #post a new tweet.
 @app.route('/timeline/tweet', methods=['POST'])
