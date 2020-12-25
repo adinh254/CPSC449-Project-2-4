@@ -38,33 +38,35 @@ For our load balancing we will apply a very simple load balance policy: round-ro
 For our project we are going to add the functionally that every API calls require HTTP Basic authentication. Our project uses to handle authentication. Flask-BasicAuth is also used to request header and produce WWW-Authenticate: the response header. The API should return true when we pass it through the authenticateUser(username, password) function, otherwise it will return HTTP 401.
 
 ## 7 Test Cases
-### create user and auth does required to be pass through the gateway
-**testing create user**
+### Unauthorized will output this 401 Authorization message if Authorization headers are invalid or missing:
+ERROR HTTP 401: Authorization headers are missing or are not in Basic format.
+**Example without authorization headers.**
+curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
+output: ERROR HTTP 401: Authorization headers are missing or are not in Basic format.
+
+## User Service Test Cases
+### The createUser and auth api calls do not require basic authentication headers.
+**Test createUser**
 curl -d '{"username":"follower1", "email":"follower1@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://127.0.0.1:5000/user/create
 output: {"email":"follower1@gmail.com","password":"pbkdf2:sha256:150000$IpniaJgR$fcabdd8415da9b2dd96e11c764d8eb9bbfc530c0f77e3fd634690132c4619935","username":"follower1"}
 
 curl -d '{"username":"follower2", "email":"follower2@gmail.com", "password":"world123"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/create
 output: {"email":"follower2@gmail.com","password":"pbkdf2:sha256:150000$3mc92QF8$11978630b2143e9cadc069518a75bc55b95fe917dc7c4800a06159880715883d","username":"follower2"}
 
-**testing auth**
+**Test auth**
 curl -d '{"username":"follower1", "password":"world123"}' -H "Content-Type: application/json" -X GET http://127.0.0.1:5000/user/auth
 output: Authentication Success!
 
-### If its not authorized then the program will output a 401 unAuthorization Error like this
-**testing follow user**
-### Without Auth
-curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
-output: ERROR HTTP 401: Authorization headers are missing or are not in Basic format.
-
-### With Auth
+**Test follow & unfollow.
+### With Auth Headers
 curl -u follower1:world123 -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/follow
 output: {"follower":5,"following":6}
 **testing unfollow user**
-### Without Auth
+### Without Auth Headers
 curl -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/unfollow
 output: ERROR HTTP 401: Authorization headers are missing or are not in Basic format.
 
-### With Auth
+### With Auth Headers
 curl -u follower1:world123 -d '{"username":"follower1", "user_followed":"follower2"}' -H "Content-Type: application/json" -X POST http://localhost:5000/user/unfollow
 output: {"follower":5,"following":6}
 
