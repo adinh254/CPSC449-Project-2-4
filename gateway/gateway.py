@@ -28,7 +28,7 @@ def ready():
     app.config['AUTH_SERVER'] = gateway_authenticator
     print(f'Authentication Server: {gateway_authenticator}')
     user_hosts = [app.config['USER_0'], app.config['USER_1'], app.config['USER_2']]
-    user_exclude = {'create'}
+    user_exclude = {'create', 'auth'}
     add_service('user', auth_required=True, auth_exclude_paths=user_exclude, hosts=user_hosts)
 
     timeline_hosts = [app.config['TIMELINES_0'], app.config['TIMELINES_1'], app.config['TIMELINES_2']]
